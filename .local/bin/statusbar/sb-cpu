@@ -1,0 +1,20 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+	1) notify-send "🖥 CPU hogs" "$(ps axch -o cmd:15,%cpu --sort=-%cpu | head)\\n(100% per core)" ;;
+	2) setsid -f "$TERMINAL" -e htop ;;
+	3) notify-send "🖥 CPU module " "\- Shows CPU temperature.
+- Click to show intensive processes.
+- Middle click to open htop." ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+awk '{u=$2+$4; t=$2+$4+$5; if (NR==1){u1=u; t1=t;} else print ($2+$4-u1) * 100 / (t-t1) "%"; }' \
+<(grep 'cpu ' /proc/stat) <(sleep 1;grep 'cpu ' /proc/stat) | awk '{printf("%.2f\n", $1)}'
+
+
+#cat <(grep 'cpu ' /proc/stat) <(sleep 1 && grep 'cpu ' /proc/stat) | awk -v RS="" '{printf "C %s.1f%", ($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)}'
+
+#echo ( grep 'cpu ' /proc/stat) <(sleep 1; grep 'cpu ' /proc/stat ) | awk -v RS="" '{ printf " %.1f%\n", ($13-$2+$15-$4)*100/($13-$2+$15-$4+$16-$5)}'
+
+#	sensors | awk '/Core 0/ {print "" $3 " |"}'

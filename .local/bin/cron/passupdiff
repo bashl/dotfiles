@@ -1,0 +1,14 @@
+#!/bin/sh
+
+############################################################
+#
+# A simple cronjob to tell if password-store has changed and
+# need be sync. If you haven't unlocked your password-store
+# in while it will prompt you for your password to check logs.
+# This version will ignored excluded passwords
+#
+############################################################
+
+passGit=$(pass git show | grep 'Remove' | wc --lines)
+
+[ "$passGit" -gt 0 ] && notify-send "Password-store is " "up to date" || notify-send "Password-store need" "to be sync"

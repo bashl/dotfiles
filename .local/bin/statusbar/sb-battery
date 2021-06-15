@@ -1,0 +1,66 @@
+#!/bin/sh
+
+# Prints all batteries, their percentage remaining and an emoji corresponding
+# to charge status (🔌 for plugged up, 🔋 for discharging on battery, etc.).
+
+case $BLOCK_BUTTON in
+	3) notify-send "🔋 Battery module" "🔋: discharging
+🛑: not charging
+♻: stagnant charge
+🔌: charging
+⚡: charged
+❗: battery very low!
+- Scroll to change adjust xbacklight." ;;
+	4) xbacklight -inc 10 ;;
+	5) xbacklight -dec 10 ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+# Loop through all attached batteries and format the info
+for battery in /sys/class/power_supply/BAT?*; do
+	# If non-first battery, print a space separator.
+	[ -n "${capacity+x}" ] && printf " "
+	# Sets up the status and capacity
+	case "$(cat "$battery/status")" in
+		"Full") status="|  " ;;
+		"Discharging") status="|  " ;;
+		"Charging") status="|  " ;;
+		"Not charging") status="|  " ;;
+		"Unknown") status="| ♻️ " ;;
+	esac
+
+	#mostra se esta conectado a um cabo
+	cabo=$(upower -d | grep online | awk '{print $2}')
+	percentage=$(upower -d | grep percentage | awk '{print $2}' | sed 2d |sed 's/%//')
+
+	if [[ $cabo == yes ]]; then
+
+		if [[ $percentage -gt 85 ]]; then
+			notify-send "Battery charged. " "
+			Battery level: ${percentage}%"
+			sleep 15m
+		fi
+			else
+
+		if [[ $percentage -le 15 ]]; then
+			notify-send  "Warning: " "
+			Low battery.
+			Current battery level: ${percentage}%"
+			sleep 15m
+		fi
+	fi
+	capacity=$(cat "$battery/capacity")
+#	capacity=$(upower -d | grep percentage | awk '{print $2}' | sed 2d | sed 's/%//')
+#	if [[ $capacity -le 25 ]]; then
+#		notify-send -t 2300 "Warning: " "Low Battery
+#		Battery level: ${capacity}%"
+#
+#	fi
+#	if [[ $capacity -le 15 ]]; then
+#		notify-send -u critical "Warning: Low Battery"
+#	 	fi
+	# Will make a warn variable if discharging and low
+	[ "$status" = "" ] && [ "$capacity" -le 25 ] && warn=""
+	# Prints the info
+	printf "%s%s%d%%" "$status" "$warn" "$capacity"; unset warn
+done && exit 0

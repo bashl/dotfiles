@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Prints the current volume or 🔇 if muted.
+
+case $BLOCK_BUTTON in
+	1) setsid -f "$TERMINAL" -e pulsemixer ;;
+	2) pamixer -t ;;
+	4) pamixer --allow-boost -i 1 ;;
+	5) pamixer --allow-boost -d 1 ;;
+	3) notify-send "墳 Volume module" "\- Shows volume 墳, 婢 if muted.
+- Middle click to mute.
+- Scroll to change." ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+[ $(pamixer --get-mute) = true ] && echo  && exit
+
+vol="$(pamixer --get-volume)"
+
+if [ "$vol" -gt "70" ]; then
+	icon=""
+elif [ "$vol" -lt "30" ]; then
+	icon=""
+else
+	icon=""
+fi
+
+echo "$icon $vol%"

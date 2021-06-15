@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ ! $(pgrep "spotifyd") ]; then
+	spotifyd --config-path=/home/rotten/spotifyd/spotifyd.toml
+
+fi
+
+spt

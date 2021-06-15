@@ -1,0 +1,2 @@
+#!/bin/bash
+scrot -d 1 -c ~/screenshots/%T-%d-%m-%Y-screenshot.png

@@ -1,0 +1,5 @@
+#!/bin/bash
+#copy the contents on sda, compress and send to ssh (optional)
+dd if=/dev/sda conv=sync,noerror bs=64K | gzip -c | ssh user@local dd of=backup.img.gz
+
+

@@ -1,0 +1,8 @@
+#!/bin/sh
+xrdb .Xresources &&
+sh .fehbg &&
+xset r rate 300 50 &&
+ setxkbmap -model abnt2 -layout br -variant abnt2 &&
+picom --daemon &
+exec dwm
+#exec dbus-launch --sh-syntax --exit-with-session dwm
